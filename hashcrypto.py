@@ -2,14 +2,16 @@ from __future__ import print_function, unicode_literals
 
 import hashlib
 from os import urandom
-import operator
-import struct
+from operator import xor
+from struct import Struct
+try:
+    from bytesop import op_xor as b_xor
+except ImportError:
+    def b_xor(a, b):
+        return bytes(map(xor, a, b))
 
-Q = struct.Struct("<Q")
 
-
-def b_xor(a, b):
-    return bytes(map(operator.xor, a, b))
+Q = Struct("<Q")
 
 
 def read_file(infile, block_size):
@@ -45,19 +47,19 @@ class HashCrypt(object):
 class CTR(HashCrypt):
 
     def __init__(self, key, hash_constructor=hashlib.sha512, nonce=None):
-        super().__init__(self, key, hash_constructor)
-        if none is None:
+        super().__init__(key, hash_constructor)
+        if nonce is None:
             nonce = self.make_nonce(hash_constructor)
         self.nonce = nonce
 
     def keystream(self, counter_start):
-        counter = 0
+        counter = counter_start
         while True:
             yield self.block(self.nonce + Q.pack(counter))
             counter += 1
 
-    def encrypt(self, plain_blocks):
-        return map(b_xor, plain_blocks, self.keystream())
+    def encrypt(self, plain_blocks, counter_start=0):
+        return map(b_xor, plain_blocks, self.keystream(counter_start))
 
     decrypt = encrypt
 
