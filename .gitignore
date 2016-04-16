@@ -8,3 +8,4 @@ __pycache__
 *.spec
 HashCrypto.egg-info/
 *.VC.db
+dist/

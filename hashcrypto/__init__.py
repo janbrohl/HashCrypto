@@ -1,4 +1,4 @@
-from __future__ import print_function, unicode_literals
+from __future__ import print_function, unicode_literals, absolute_import
 
 import hashlib
 from os import urandom
@@ -14,14 +14,14 @@ else:
 try:
     from bytesop import op_xor
 except ImportError:
-    from bytesop_dropin import op_xor
+    from hashcrypto.bytesop_fallback import op_xor
 
 
 __version__ = "0.2"
 
 
-Q = Struct("<Q")
-B = Struct("<B")
+Q = Struct(b"<Q")
+B = Struct(b"<B")
 
 
 def pack_pascal(b):

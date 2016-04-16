@@ -8,9 +8,7 @@ setup(name="HashCrypto",
       author_email="janbrohl@t-online.de",
       url="https://github.com/janbrohl/HashCrypto",
       test_suite="tests",
-      py_modules=[
-          'hashcrypto'
-      ],
+      packages=["hashcrypto"],
       scripts=["hashenc.py", "hashdec.py"],
       classifiers=[
           "Intended Audience :: Developers",
