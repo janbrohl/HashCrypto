@@ -6,3 +6,5 @@ __pycache__
 /build
 /env*
 *.spec
+HashCrypto.egg-info/
+*.VC.db
