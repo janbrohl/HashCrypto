@@ -1,5 +1,5 @@
 #! python
-from __future__ import print_function, unicode_literals
+from __future__ import print_function, unicode_literals, absolute_import
 
 import hashcrypto
 import argparse
@@ -24,6 +24,10 @@ parser.add_argument("--encoding", "-e", choice=encodings, default=plain_ascii,
                     help="Encoding for provided key. Defaults to ascii.")
 
 
-ns = parser.parse_args()
-hashcrypto.decrypt_file(ns.infile, ns.outfile, ns.encoding(ns.key))
-parser.exit()
+def main():
+    ns = parser.parse_args()
+    hashcrypto.decrypt_file(ns.infile, ns.outfile, ns.encoding(ns.key))
+    parser.exit()
+
+if __name__ == "__main__":
+    main()

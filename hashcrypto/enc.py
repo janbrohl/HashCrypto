@@ -1,5 +1,5 @@
 #! python
-from __future__ import print_function, unicode_literals
+from __future__ import print_function, unicode_literals, absolute_import
 
 import hashcrypto
 import argparse
@@ -34,27 +34,31 @@ parser.add_argument("--encoding", "-e", choice=encodings, default=plain_ascii,
                     help="Encoding for provided key, IV, nonce. Defaults to none.")
 
 
-ns = parser.parse_args()
+def main():
+    ns = parser.parse_args()
+    e = ns.encoding
+    cls = hashcrypto.MODES[ns.mode]
+    if hasattr(ns, "iv"):
+        if issubclass(cls, hashcrypto.WithIV):
+            crypt = cls(e(ns.key), ns.algorithm, e(ns.iv))
+        else:
+            parser.error(
+                "Initializaion vector was provided but is not supported by cipher mode.")
+    elif hasattr(ns, "nonce"):
+        if issubclass(cls, hashcrypto.WithNonce):
+            crypt = cls(e(ns.key), ns.algorithm, e(ns.nonce))
+        else:
+            parser.error(
+                "Nonce was provided but is not supported by cipher mode.")
+    else:
+        crypt = cls(e(ns.key), ns.algorithm)
+        if ns.verbose:
+            if isinstance(crypt, hashcrypto.WithIV):
+                print("IV:", binascii.b2a_hex(crypt.start_iv), file=sys.stderr)
+            elif isinstance(crypt, hashcrypto.WithNonce):
+                print("Nonce:", binascii.b2a_hex(crypt.nonce), file=sys.stderr)
+    crypt.encrypt_file(ns.infile, ns.outfile, write_header=True)
+    parser.exit()
 
-e = ns.encoding
-cls = hashcrypto.MODES[ns.mode]
-if hasattr(ns, "iv"):
-    if issubclass(cls, hashcrypto.WithIV):
-        crypt = cls(e(ns.key), ns.algorithm, e(ns.iv))
-    else:
-        parser.error(
-            "Initializaion vector was provided but is not supported by cipher mode.")
-elif hasattr(ns, "nonce"):
-    if issubclass(cls, hashcrypto.WithNonce):
-        crypt = cls(e(ns.key), ns.algorithm, e(ns.nonce))
-    else:
-        parser.error("Nonce was provided but is not supported by cipher mode.")
-else:
-    crypt = cls(e(ns.key), ns.algorithm)
-    if ns.verbose:
-        if isinstance(crypt, hashcrypto.WithIV):
-            print("IV:", binascii.b2a_hex(crypt.start_iv), file=sys.stderr)
-        elif isinstance(crypt, hashcrypto.WithNonce):
-            print("Nonce:", binascii.b2a_hex(crypt.nonce), file=sys.stderr)
-crypt.encrypt_file(ns.infile, ns.outfile, write_header=True)
-parser.exit()
+if __name__ == "__main__":
+    main()

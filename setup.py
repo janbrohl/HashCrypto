@@ -9,7 +9,11 @@ setup(name="HashCrypto",
       url="https://github.com/janbrohl/HashCrypto",
       test_suite="tests",
       packages=["hashcrypto"],
-      scripts=["hashenc.py", "hashdec.py"],
+      entry_points={"console_scripts": [
+          "hashenc = hashcrypto.enc:main",
+          "hashdec = hashcrypto.dec:main"
+      ]
+      },
       classifiers=[
           "Intended Audience :: Developers",
           "License :: OSI Approved :: BSD License",
