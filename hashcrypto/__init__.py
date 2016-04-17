@@ -17,7 +17,7 @@ except ImportError:
     from hashcrypto.bytesop_fallback import op_xor
 
 
-__version__ = "0.2"
+__version__ = "0.3"
 
 
 Q = Struct(b"<Q")

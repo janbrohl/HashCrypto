@@ -9,3 +9,4 @@ __pycache__
 HashCrypto.egg-info/
 *.VC.db
 dist/
+docs/build/
