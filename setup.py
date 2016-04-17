@@ -10,8 +10,8 @@ setup(name="HashCrypto",
       test_suite="tests",
       packages=["hashcrypto"],
       entry_points={"console_scripts": [
-          "hashenc = hashcrypto.enc:main",
-          "hashdec = hashcrypto.dec:main"
+          "hashenc = hashcrypto._commands:enc_main",
+          "hashdec = hashcrypto._commands:dec_main"
       ]
       },
       classifiers=[
