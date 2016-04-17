@@ -11,5 +11,11 @@ python:
 matrix:
   allow_failures:
     - python: "2.6"
+before_install:
+  - pip install codecov
 install: true
-script: python setup.py install test
+script: 
+  - python setup.py install test
+after_success:
+  - coverage run -m unittest discover -p tests
+  - codecov
