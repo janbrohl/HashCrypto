@@ -21,6 +21,7 @@ import os
 #sys.path.insert(0, os.path.abspath('.'))
 
 sys.path.insert(0, os.path.abspath('../..'))
+import hashcrypto
 
 # -- General configuration ------------------------------------------------
 
@@ -62,7 +63,7 @@ author = u'Jan Brohl'
 # built documents.
 #
 # The short X.Y version.
-version = hashcrypt.__version__
+version = hashcrypto.__version__
 
 # The full version, including alpha/beta/rc tags.
 release = version
