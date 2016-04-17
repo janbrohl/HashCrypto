@@ -17,26 +17,32 @@ except ImportError:
     from hashcrypto.bytesop_fallback import op_xor
 
 
-__version__ = "0.3"
+__version__ = "0.4"
 
 
 Q = Struct(b"<Q")
 B = Struct(b"<B")
 
 
-def pack_pascal(b):
+def pack_plus(b):
     if isinstance(b, unicode):
         b = b.encode("ascii")
+    if len(b) >= 0xFF:
+        return B.pack(0xFF) + b[:0xFF] + pack(b[0xFF:])
     return B.pack(len(b)) + b
 
 
-def unpack_pascal(b):
+def unpack_plus(b):
     size = B.unpack(b[0])[0]
+    if size >= 0xFF:
+        return b[1:256] + unpack(b[256:])
     return b[1:size + 1]
 
 
-def read_pascal(f):
+def read_plus(f):
     size = B.unpack(f.read(1))[0]
+    if size >= 0xFF:
+        return f.read(size) + read(f)
     return f.read(size)
 
 
@@ -81,7 +87,7 @@ class HashCrypt(object):
             outfile.write(block)
 
     def header(self):
-        return b"HASHCRYPT" + (b"".join(short_map(pack_pascal, (__version__, self.__class__.__name__, self.hash_name()))))
+        return b"HASHCRYPT" + (b"".join(short_map(pack_plus, (__version__, self.__class__.__name__, self.hash_name()))))
 
     def hash_name(self):
         return self.hash().name
@@ -100,7 +106,7 @@ class WithIV(HashCrypt):
         self.start_iv = start_iv
 
     def header(self):
-        return super(WithIV, self).header() + pack_pascal(self.start_iv)
+        return super(WithIV, self).header() + pack_plus(self.start_iv)
 
     @classmethod
     def suggest_iv_size(cls, hash_constructor):
@@ -120,7 +126,7 @@ class WithNonce(HashCrypt):
         self.nonce = nonce
 
     def header(self):
-        return super(WithNonce, self).header() + pack_pascal(self.nonce)
+        return super(WithNonce, self).header() + pack_plus(self.nonce)
 
     @classmethod
     def make_nonce(cls, hash_constructor=hashlib.sha512):
@@ -214,9 +220,9 @@ MODES = {"CTR": CTR, "OFB": OFB, "CFB": CFB}
 def decrypt_file(infile, outfile, key):
     if infile.read(9) != b"HASHCRYPT":
         raise ValueError("Bad Header")
-    ver = read_pascal(infile).decode("ascii")
-    mode = read_pascal(infile).decode("ascii")
-    h = read_pascal(infile).decode("ascii")
-    iv_nonce = read_pascal(infile)
+    ver = read_plus(infile).decode("ascii")
+    mode = read_plus(infile).decode("ascii")
+    h = read_plus(infile).decode("ascii")
+    iv_nonce = read_plus(infile)
     obj = MODES[mode](key, h, iv_nonce)
     obj.decrypt_stream(infile, outfile)
