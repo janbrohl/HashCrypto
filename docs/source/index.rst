@@ -7,8 +7,7 @@ Welcome to HashCrypto's documentation!
 ======================================
 .. image:: https://travis-ci.org/janbrohl/HashCrypto.svg?branch=master
     :target: https://travis-ci.org/janbrohl/HashCrypto
-.. image:: https://codecov.io/github/janbrohl/HashCrypto/coverage.svg?branch=master
-    :target: https://codecov.io/github/janbrohl/HashCrypto?branch=master
+
 .. image:: https://readthedocs.org/projects/hashcrypto/badge/?version=master
     :target: http://hashcrypto.readthedocs.org/en/master/?badge=master
 
