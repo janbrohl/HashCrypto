@@ -28,21 +28,21 @@ def pack_plus(b):
     if isinstance(b, unicode):
         b = b.encode("ascii")
     if len(b) >= 0xFF:
-        return B.pack(0xFF) + b[:0xFF] + pack(b[0xFF:])
+        return B.pack(0xFF) + b[:0xFF] + pack_plus(b[0xFF:])
     return B.pack(len(b)) + b
 
 
 def unpack_plus(b):
     size = B.unpack(b[0])[0]
     if size >= 0xFF:
-        return b[1:256] + unpack(b[256:])
+        return b[1:256] + unpack_plus(b[256:])
     return b[1:size + 1]
 
 
 def read_plus(f):
     size = B.unpack(f.read(1))[0]
     if size >= 0xFF:
-        return f.read(size) + read(f)
+        return f.read(size) + read_plus(f)
     return f.read(size)
 
 
